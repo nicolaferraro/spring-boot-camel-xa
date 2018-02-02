@@ -1,0 +1,79 @@
+{
+  "spec": {
+    "podManagementPolicy": "Parallel",
+    "terminationGracePeriodSeconds": 120000,
+    "template": {
+      "spec": {
+        "serviceAccountName": "spring-boot-camel-xa",
+        "containers": [
+          {
+            "env": [
+              {
+                "name": "SPRING_DATASOURCE_USERNAME",
+                "valueFrom": {
+                  "secretKeyRef": {
+                    "name": "narayana-database",
+                    "key": "database-user"
+                  }
+                }
+              },
+              {
+                "name": "SPRING_DATASOURCE_PASSWORD",
+                "valueFrom": {
+                  "secretKeyRef": {
+                    "name": "narayana-database",
+                    "key": "database-password"
+                  }
+                }
+              },
+              {
+                "name": "SPRING_ACTIVEMQ_USER",
+                "valueFrom": {
+                  "secretKeyRef": {
+                    "name": "broker-amq",
+                    "key": "broker-user"
+                  }
+                }
+              },
+              {
+                "name": "SPRING_ACTIVEMQ_PASSWORD",
+                "valueFrom": {
+                  "secretKeyRef": {
+                    "name": "broker-amq",
+                    "key": "broker-password"
+                  }
+                }
+              },
+              {
+                "name": "TX_BASE_DIR",
+                "value": "/var/transaction/data"
+              },
+              {
+                "name": "TX_NODENAME",
+                "valueFrom": {
+                  "fieldRef": {
+                    "fieldPath": "metadata.name"
+                  }
+                }
+              }
+            ],
+            "volumeMounts": [
+              {
+                "mountPath": "/var/transaction/data",
+                "name": "spring-boot-camel-xa-data"
+              }
+            ]
+          }
+        ],
+        "volumes": [
+          {
+            "name": "spring-boot-camel-xa-data",
+            "persistentVolumeClaim": {
+              "claimName": "spring-boot-camel-xa"
+            }
+          }
+        ]
+      }
+    }
+  }
+}
