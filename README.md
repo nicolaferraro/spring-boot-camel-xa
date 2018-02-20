@@ -26,7 +26,7 @@ This command will deploy a PostgreSQL database, a ActiveMQ broker and a Spring-B
 Once the application is deployed you can get the base service URL using the following command:
  
 ```
-NARAYANA_HOST=$(oc get route spring-boot-camel-narayana -o jsonpath={.spec.host})
+NARAYANA_HOST=$(oc get route spring-boot-camel-xa -o jsonpath={.spec.host})
 ```
 
 The application exposes the following rest URLs:
