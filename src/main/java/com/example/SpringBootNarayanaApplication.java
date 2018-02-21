@@ -16,36 +16,25 @@
  */
 package com.example;
 
-import java.sql.Connection;
-import java.sql.SQLException;
-import javax.jms.ConnectionFactory;
-import javax.sql.DataSource;
-import javax.sql.XAConnection;
-import javax.sql.XADataSource;
-
-import com.arjuna.ats.jbossatx.jta.RecoveryManagerService;
-import com.example.crash.DummyXAResourceRecovery;
-
 import org.apache.camel.component.jms.JmsComponent;
 import org.apache.camel.component.servlet.CamelHttpTransportServlet;
 import org.apache.camel.component.sql.SqlComponent;
 import org.apache.camel.spring.spi.SpringTransactionPolicy;
-import org.postgresql.xa.PGXADataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.boot.jta.narayana.DbcpXADataSourceWrapper;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
-import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Bean;
-import org.springframework.stereotype.Component;
+import org.springframework.context.annotation.Import;
 import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.util.StringUtils;
+
+import javax.jms.ConnectionFactory;
+import javax.sql.DataSource;
 
 @SpringBootApplication
+@Import(DbcpXADataSourceWrapper.class)
 public class SpringBootNarayanaApplication {
 
 	private static final Logger LOG = LoggerFactory.getLogger(SpringBootNarayanaApplication.class);
@@ -81,55 +70,6 @@ public class SpringBootNarayanaApplication {
 				new CamelHttpTransportServlet(), "/api/*");
 		servlet.setName("CamelServlet");
 		return servlet;
-	}
-
-//    /**
-//     * Hack needed with Narayana version 5.4.x and 5.5.x
-//     */
-//    @Bean
-//    public XADataSource xaDataSource(@Value("${spring.datasource.url}") String url, @Value("${spring.datasource.username}") String user, @Value("${spring.datasource.password}") String password) {
-//        PGXADataSource xa = new PGXADataSource() {
-//            @Override
-//            public XAConnection getXAConnection(String user, String password) throws SQLException {
-//                if (StringUtils.isEmpty(user) && StringUtils.isEmpty(password)) {
-//                    return super.getXAConnection();
-//                }
-//                return super.getXAConnection(user, password);
-//            }
-//
-//            @Override
-//            public Connection getConnection(String user, String password) throws SQLException {
-//                if (StringUtils.isEmpty(user) && StringUtils.isEmpty(password)) {
-//                    return super.getConnection();
-//                }
-//                return super.getConnection(user, password);
-//            }
-//        };
-//        xa.setUser(user);
-//        xa.setPassword(password);
-//        xa.setUrl(url);
-//
-//        return xa;
-//    }
-
-	/**
-	 * Dummy xa resource recovery to simulate a crash before final commit.
-	 *
-	 * This is (obviously) not needed in production and must be removed.
-	 */
-	@Component
-	static class ApplicationCrashConfiguration implements ApplicationListener<ApplicationReadyEvent> {
-
-		@Autowired
-		private RecoveryManagerService recoveryManagerService;
-
-		@Override
-		public void onApplicationEvent(ApplicationReadyEvent applicationReadyEvent) {
-			LOG.warn("Adding DummyXAResourceRecovery to recovery manager service");
-			DummyXAResourceRecovery dummyRecovery = new DummyXAResourceRecovery();
-			recoveryManagerService.addXAResourceRecovery(dummyRecovery);
-		}
-
 	}
 
 }

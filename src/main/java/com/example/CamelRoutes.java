@@ -52,7 +52,7 @@ public class CamelRoutes extends RouteBuilder{
                 .choice()
                     .when(body().startsWith("killBeforeCommit"))
                         .log("The system will be killed right after the first phase of 2pc and before the final commit")
-                        .bean("crashManager", "killBeforeCommit")
+                        //.bean("crashManager", "killBeforeCommit")
                 .end()
                 .to("sql:insert into audit_log (message) values (:#message)")
                 .to("jms:outbound")
