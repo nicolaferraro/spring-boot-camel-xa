@@ -43,8 +43,8 @@ public class CamelRoutes extends RouteBuilder{
                 .transform().simple("Message '${header.entry}' pushed into inbound jms queue");
 
 
-        from("jms:inbound?transacted=true")
-                .transacted("PROPAGATION_REQUIRED")
+        from("jms:inbound")
+                .transacted()
                 .process(x -> x.getIn().setHeader("progressive", x.getIn().getHeader("JMSXDeliveryCount") != null ? x.getIn().getHeader("JMSXDeliveryCount") : "1"))
                 .transform().simple("${body}-${header.progressive}")
                 .log("Processing {message}-{deliveryCount} = ${body}")
