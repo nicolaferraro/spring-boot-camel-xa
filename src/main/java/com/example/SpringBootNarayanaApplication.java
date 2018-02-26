@@ -25,17 +25,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
-import org.springframework.boot.jta.narayana.DbcpXADataSourceWrapper;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Import;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.PlatformTransactionManager;
 
 import javax.jms.ConnectionFactory;
 
 @SpringBootApplication
-@Import(DbcpXADataSourceWrapper.class)
 public class SpringBootNarayanaApplication {
 
 	private static final Logger LOG = LoggerFactory.getLogger(SpringBootNarayanaApplication.class);
