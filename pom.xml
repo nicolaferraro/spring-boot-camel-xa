@@ -90,9 +90,9 @@
 			<artifactId>spring-boot-starter-jta-narayana</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.jboss.fuse.openshift</groupId>
-			<artifactId>statefulset-recovery-controller-narayana</artifactId>
-			<version>1.0-SNAPSHOT</version>
+			<groupId>me.snowdrop</groupId>
+			<artifactId>spring-boot-narayana-recovery-controller</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 
 		<dependency>
